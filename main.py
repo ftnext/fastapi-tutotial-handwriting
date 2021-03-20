@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 
 from fastapi import FastAPI
 
@@ -26,8 +27,15 @@ async def get_model(model_name: ModelName):
     return {"model_name": model_name, "message": "Have some residuals"}
 
 
+@app.get("/items/{item_id}")
+async def read_item(item_id: str, q: Optional[str] = None):
+    if q:
+        return {"item_id": item_id, "q": q}
+    return {"item_id": item_id}
+
+
 @app.get("/items/")
-async def read_item(skip: int = 0, limit: int = 10):
+async def read_item1(skip: int = 0, limit: int = 10):
     return fake_item_db[skip: skip + limit]
 
 
