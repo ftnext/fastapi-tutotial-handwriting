@@ -41,6 +41,15 @@ async def read_user_item(
     return item
 
 
+@app.get("/items/{item_id}")
+async def read_item(
+    item_id: str, needy: str, skip: int = 0, limit: Optional[int] = None
+):
+    # クエリパラメタのうち needyが必須、skipはデフォルト値持ち、limitはオプショナル
+    item = {"item_id": item_id, "needy": needy, "skip": skip, "limit": limit}
+    return item
+
+
 @app.get("/items/")
 async def read_item1(skip: int = 0, limit: int = 10):
     return fake_item_db[skip: skip + limit]
