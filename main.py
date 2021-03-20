@@ -11,6 +11,8 @@ class ModelName(str, Enum):  # APIドキュメント向けにstrの継承が必�
 
 app = FastAPI()
 
+fake_item_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
+
 
 @app.get("/models/{model_name}")
 async def get_model(model_name: ModelName):
@@ -24,8 +26,13 @@ async def get_model(model_name: ModelName):
     return {"model_name": model_name, "message": "Have some residuals"}
 
 
+@app.get("/items/")
+async def read_item(skip: int = 0, limit: int = 10):
+    return fake_item_db[skip: skip + limit]
+
+
 @app.get("/items/{item_id}")  # path operation decorator (path: / . operation: get)
-async def read_item(item_id: int):  # path operation function
+async def read_item0(item_id: int):  # path operation function
     # 型ヒントと合わないパラメタの場合は422  Unprocessable Entity
     return {"item_id": item_id}
 
