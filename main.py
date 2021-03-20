@@ -28,10 +28,15 @@ async def get_model(model_name: ModelName):
 
 
 @app.get("/items/{item_id}")
-async def read_item(item_id: str, q: Optional[str] = None):
+async def read_item(item_id: str, q: Optional[str] = None, short: bool = False):
+    item = {"item_id": item_id}
     if q:
-        return {"item_id": item_id, "q": q}
-    return {"item_id": item_id}
+        item.update({"q": q})
+    if not short:  # query parameterのshortは1でもTrueでも文字列でもよい
+        item.update(
+            {"description": "This is an amazing item that has a long description"}
+        )
+    return item
 
 
 @app.get("/items/")
