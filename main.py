@@ -1,6 +1,27 @@
+from enum import Enum
+
 from fastapi import FastAPI
 
+
+class ModelName(str, Enum):  # APIドキュメント向けにstrの継承が必要
+    alexnet = "alexnet"
+    resnet = "resnet"
+    lenet = "lenet"
+
+
 app = FastAPI()
+
+
+@app.get("/models/{model_name}")
+async def get_model(model_name: ModelName):
+    if model_name == ModelName.alexnet:  # 列挙型のメンバとの比較
+        # 返り値の中の列挙型は文字列に変換される
+        return {"model_name": model_name, "message": "Deep Learning FTW!"}
+
+    if model_name.value == "lenet":  # 列挙型の値を取得して比較
+        return {"model_name": model_name, "message": "LeCNN all the images"}
+    
+    return {"model_name": model_name, "message": "Have some residuals"}
 
 
 @app.get("/items/{item_id}")  # path operation decorator (path: / . operation: get)
