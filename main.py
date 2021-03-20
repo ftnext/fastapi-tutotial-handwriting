@@ -38,3 +38,9 @@ async def read_user(user_id: str):
 @app.get("/users/me")  # 上に定義されていない場合、全てread_userで実行されてしまう
 async def read_user_me():
     return {"user_id": "the current user"}
+
+
+@app.get("/files/{file_path:path}")
+async def read_file(file_path: str):
+    # /files//home/johndoe/myfile.txt -> /home/johndoe/myfile.txt
+    return {"file_path": file_path}
