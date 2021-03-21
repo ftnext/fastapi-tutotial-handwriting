@@ -20,6 +20,32 @@ def build_hl_lines_mapping(file_path: Path) -> Mapping:
     return source_to_hl_lines
 
 
+def find_original_file(translation_file_path: Path) -> Path:
+    """
+    >>> from pathlib import PosixPath
+    >>> find_original_file(Path("fastapi/docs/ja/docs/tutorial/query-params.md"))  # NOQA
+    PosixPath('fastapi/docs/en/docs/tutorial/query-params.md')
+    >>> find_original_file(Path("fastapi/docs/ja/docs/tutorial/security/first-steps.md"))  # NOQA
+    PosixPath('fastapi/docs/en/docs/tutorial/security/first-steps.md')
+    """
+    docs_count = 0
+    directory_names = []
+
+    parent_path = translation_file_path.parent
+    while True:
+        if parent_path.name == "docs":
+            docs_count += 1
+            if docs_count == 2:
+                break
+        if parent_path.name != "ja":
+            directory_names.append(parent_path.name)
+        parent_path = parent_path.parent
+    original_path = parent_path / "en"
+    for name in reversed(directory_names):
+        original_path = original_path / name
+    return original_path / translation_file_path.name
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("translation", type=Path)
@@ -27,10 +53,7 @@ if __name__ == "__main__":
 
     translation_hl_lines = build_hl_lines_mapping(args.translation)
 
-    docs_root = args.translation.parent.parent.parent.parent
-    original_file = (
-        docs_root / "en" / "docs" / "tutorial" / args.translation.name
-    )
+    original_file = find_original_file(args.translation)
     original_hl_lines = build_hl_lines_mapping(original_file)
 
     # ref: https://teratail.com/questions/171217#reply-255067
